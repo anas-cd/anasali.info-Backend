@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Course;
 use App\Models\Education;
 use App\Models\Experience;
 use App\Models\Profile;
+use App\Policies\v1\CoursePolicy;
 use App\Policies\v1\EducationPolicy;
 use App\Policies\v1\ExperiencePolicy;
 use App\Policies\v1\ProfilePolicy;
@@ -30,5 +32,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Profile::class, ProfilePolicy::class);
         Gate::policy(Education::class, EducationPolicy::class);
         Gate::policy(Experience::class, ExperiencePolicy::class);
+        Gate::policy(Course::class, CoursePolicy::class);
     }
 }

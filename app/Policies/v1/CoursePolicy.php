@@ -2,11 +2,11 @@
 
 namespace App\Policies\v1;
 
-use App\Models\Experience;
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ExperiencePolicy
+class CoursePolicy
 {
     /**
      * Perform pre-authorization checks.
@@ -27,18 +27,18 @@ class ExperiencePolicy
     /**
      * Determine whether the user can view any models.
      */
-    // public function viewAny(User $user): bool
-    // {
-    //     //
-    // }
+    public function viewAny(User $user): bool
+    {
+        //
+    }
 
     /**
      * Determine whether the user can view the model.
      */
-    // public function view(User $user, Experience $experience): bool
-    // {
-    //     //
-    // }
+    public function view(User $user, Course $course): bool
+    {
+        //
+    }
 
     /**
      * Determine whether the user can create models.
@@ -49,7 +49,7 @@ class ExperiencePolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("experience:create")
+        return $user->tokenCan("course:create")
             ? Response::allow()
             : Response::denyWithStatus(403);
     }
@@ -57,13 +57,13 @@ class ExperiencePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Experience $experience): Response
+    public function update(User $user, Course $course): Response
     {
         /**
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("experience:create")
+        return $user->tokenCan("course:create")
             ? Response::allow()
             : Response::denyWithStatus(403);
     }
@@ -71,24 +71,24 @@ class ExperiencePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    // public function delete(User $user, Experience $experience): bool
-    // {
-    //     //
-    // }
+    public function delete(User $user, Course $course): bool
+    {
+        //
+    }
 
     /**
      * Determine whether the user can restore the model.
      */
-    // public function restore(User $user, Experience $experience): bool
-    // {
-    //     //
-    // }
+    public function restore(User $user, Course $course): bool
+    {
+        //
+    }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    // public function forceDelete(User $user, Experience $experience): bool
-    // {
-    //     //
-    // }
+    public function forceDelete(User $user, Course $course): bool
+    {
+        //
+    }
 }
