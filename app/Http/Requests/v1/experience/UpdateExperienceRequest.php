@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Http\Requests\v1\profile;
+namespace App\Http\Requests\v1\experience;
 
-use App\Traits\APIResponseTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
-class UpdateprofileRequest extends FormRequest
+class UpdateExperienceRequest extends FormRequest
 {
-    use APIResponseTrait;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -21,16 +18,15 @@ class UpdateprofileRequest extends FormRequest
          * TODO: configure a better error handling in case the profile is not found.
          */
         try {
-            $profile = Auth::user()->profiles()->where("major", $this->major)->firstOrFail();
+            $experience = Auth::user()->experiences()->where("id", $this->id)->firstOrFail();
 
         } catch (\Throwable $th) {
             return false;
         }
 
-        $response = Gate::authorize('update', $profile);
+        $response = Gate::authorize('update', $experience);
 
         return $response->allowed() ? true : false;
-
     }
 
     /**
@@ -41,14 +37,16 @@ class UpdateprofileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'string'],
-            'email' => ['sometimes', 'string', 'email'],
-            'speciality' => ['sometimes', 'string'],
-            'phone' => ['sometimes', 'string'],
-            'biography' => ['sometimes', 'string'],
-            'social' => ['sometimes'],
-            'resume_link' => ['sometimes', 'string'],
-            'major' => ['sometimes', 'string'],
+            'role' => ['sometimes', 'string'],
+            'description' => ['sometimes', 'string'],
+            'startDate' => ['sometimes', 'date_format:Y-m-d'],
+            'endDate' => ['sometimes', 'date_format:Y-m-d'],
+            'employer' => ['sometimes', 'array'],
+            'employer.name' => ['sometimes', 'string'],
+            'employer.refName' => ['sometimes', 'string'],
+            'employer.refContact' => ['sometimes', 'string'],
+            'employer.image' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif|max:2048'],
+            'employer.website' => ['sometimes', 'url'],
         ];
     }
 }

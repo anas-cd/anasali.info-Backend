@@ -37,11 +37,11 @@ class UpdateEducationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string'],
-            'source' => ['string'],
-            'country' => ['string'],
-            'date' => ['date_format:Y-m-d'],
-            'courses' => []
+            'name' => ['sometimes', 'string'],
+            'source' => ['sometimes', 'string'],
+            'country' => ['sometimes', 'string'],
+            'date' => ['sometimes', 'date_format:Y-m-d'],
+            'courses' => ['sometimes']
         ];
     }
 }
