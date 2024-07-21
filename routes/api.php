@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\v1\AuthController;
+use App\Http\Controllers\v1\CourseController;
 use App\Http\Controllers\v1\EducationController;
 use App\Http\Controllers\v1\ExperienceController;
 use App\Http\Controllers\v1\ProfileController;
@@ -18,6 +19,8 @@ Route::prefix('v1')->group(function () {
     Route::get("{major}/education", [EducationController::class, "showByMajor"]);
     /* - experience - */
     Route::get("{major}/experience", [ExperienceController::class, "showByMajor"]);
+    /* - course - */
+    Route::get("{major}/course", [CourseController::class, "showByMajor"]);
 
     /* - user - */
     Route::post("user/register", [AuthController::class, "register"]);
@@ -40,4 +43,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     /* - experience - */
     Route::patch("{major}/experience/{id}", [ExperienceController::class, "update"]);
     Route::post("experience", [ExperienceController::class, "store"]);
+    /* - course - */
+    Route::patch("{major}/course/{id}", [CourseController::class, "update"]);
+    Route::post("course", [CourseController::class, "store"]);
 });
