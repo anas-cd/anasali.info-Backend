@@ -6,6 +6,7 @@ use App\Http\Controllers\v1\EducationController;
 use App\Http\Controllers\v1\ExperienceController;
 use App\Http\Controllers\v1\HobbyController;
 use App\Http\Controllers\v1\ProfileController;
+use App\Http\Controllers\v1\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 /* --- v1 Routes (personal use only)--- */
@@ -24,6 +25,8 @@ Route::prefix('v1')->group(function () {
     Route::get("{major}/course", [CourseController::class, "showByMajor"]);
     /* - hobby - */
     Route::get("{major}/hobby", [HobbyController::class, "showByMajor"]);
+    /* - project - */
+    Route::get("{major}/project", [ProjectController::class, "showByMajor"]);
 
     /* - user - */
     Route::post("user/register", [AuthController::class, "register"]);
@@ -52,4 +55,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     /* - hobby - */
     Route::patch("{major}/hobby/{id}", [HobbyController::class, "update"]);
     Route::post("hobby", [HobbyController::class, "store"]);
+    /* - project - */
+    Route::patch("{major}/project/{id}", [ProjectController::class, "update"]);
+    Route::post("project", [ProjectController::class, "store"]);
 });
