@@ -61,7 +61,7 @@ class ExperienceController extends Controller
             "employer_website" => $validated["employer"]["website"],
         ]);
 
-        // --- returning new eduation data ---
+        // --- returning new experience data ---
         return $this->success(ExperienceResource::make($experience), 200, 'experience record successfully created!');
     }
 

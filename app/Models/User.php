@@ -78,4 +78,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Course::class);
     }
+
+    /**
+     * Get the eductions list of the user
+     */
+    public function hobbies(): HasMany
+    {
+        return $this->hasMany(Hobby::class);
+    }
 }
