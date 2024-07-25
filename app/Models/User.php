@@ -102,4 +102,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Skill::class);
     }
+
+    /**
+     * Get the techStacks list of the user
+     */
+    public function techStacks(): HasMany
+    {
+        return $this->hasMany(TechStack::class);
+    }
 }

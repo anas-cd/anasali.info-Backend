@@ -9,6 +9,7 @@ use App\Models\Hobby;
 use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Skill;
+use App\Models\TechStack;
 use App\Policies\v1\SkillPolicy;
 use App\Policies\v1\CoursePolicy;
 use App\Policies\v1\EducationPolicy;
@@ -16,6 +17,7 @@ use App\Policies\v1\ExperiencePolicy;
 use App\Policies\v1\HobbyPolicy;
 use App\Policies\v1\ProfilePolicy;
 use App\Policies\v1\ProjectPolicy;
+use App\Policies\v1\TechStackPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -42,5 +44,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Hobby::class, HobbyPolicy::class);
         Gate::policy(Project::class, ProjectPolicy::class);
         Gate::policy(Skill::class, SkillPolicy::class);
+        Gate::policy(TechStack::class, TechStackPolicy::class);
     }
 }
