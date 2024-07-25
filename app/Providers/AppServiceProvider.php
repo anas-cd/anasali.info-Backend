@@ -8,6 +8,8 @@ use App\Models\Experience;
 use App\Models\Hobby;
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\Skill;
+use App\Policies\v1\SkillPolicy;
 use App\Policies\v1\CoursePolicy;
 use App\Policies\v1\EducationPolicy;
 use App\Policies\v1\ExperiencePolicy;
@@ -39,5 +41,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Course::class, CoursePolicy::class);
         Gate::policy(Hobby::class, HobbyPolicy::class);
         Gate::policy(Project::class, ProjectPolicy::class);
+        Gate::policy(Skill::class, SkillPolicy::class);
     }
 }
