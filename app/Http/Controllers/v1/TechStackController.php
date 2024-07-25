@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\v1\ProjectResource;
-use App\Models\Project;
-use App\Http\Requests\v1\project\StoreProjectRequest;
-use App\Http\Requests\v1\project\UpdateProjectRequest;
+use App\Http\Resources\v1\TechStackCollection;
+use App\Http\Resources\v1\TechStackResource;
+use App\Models\TechStack;
+use App\Http\Requests\v1\techStack\StoreTechStackRequest;
+use App\Http\Requests\v1\techStack\UpdateTechStackRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
 use Request;
 
-class ProjectController extends Controller
+class TechStackController extends Controller
 {
     use APIResponseTrait;
 
@@ -34,38 +35,39 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectRequest $request)
+    public function store(StoreTechStackRequest $request)
     {
         // --- validated request ---
         $validated = $request->validated();
 
-        // --- handle project image file uploade ---
-        if (isset($validated['image'])) {
-            $file = $validated['image'];
+        // --- handle tech image file uploade ---
+        if (isset($validated['img'])) {
+            $file = $validated['img'];
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('images', $fileName, 'public'); // please specify the 'public' as the disk since it's not the default disk
         }
 
         // --- saving in db ---
-        $project = Project::create([
+        $tech = TechStack::create([
             "user_id" => Auth::user()->id,
             "major" => $validated["major"],
-            "name" => $validated["name"],
+            "label" => $validated["label"],
+            "category" => $validated["category"],
+            "type" => $validated["type"] ?? null,
+            "url" => $validated["link"],
+            "progress" => $validated["progress"] ?? null,
+            "tip" => $validated["tip"] ?? null,
             "image_path" => $path,
-            "repo_url" => $validated["codeLink"],
-            "demo_url" => $validated["demoLink"],
-            "description" => $validated["description"],
-            "tags" => $validated["tags"]
         ]);
 
-        // --- returning new project data ---
-        return $this->success(ProjectResource::make($project), 200, 'project record successfully created!');
+        // --- returning new tech data ---
+        return $this->success(TechStackResource::make($tech), 200, 'tech record successfully created!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Project $project)
+    public function show(TechStack $techStack)
     {
         //
     }
@@ -78,15 +80,15 @@ class ProjectController extends Controller
         /**
          * NOTE: this is not linked to any user since there is only one user.
          */
-        $project = Project::where("major", $major)->get();
+        $tech = TechStack::where("major", $major)->get();
 
-        return $this->success(ProjectResource::collection($project), 200, "success");
+        return $this->success(new TechStackCollection($tech), 200, "success");
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project $project)
+    public function edit(TechStack $techStack)
     {
         //
     }
@@ -94,32 +96,32 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, Project $project, string $major, string $id)
+    public function update(UpdateTechStackRequest $request, TechStack $techStack, string $major, string $id)
     {
         // --- validated request ---
         $validated = $request->validated();
-        // --- look up project record of user with specified major
-        $project = Project::where("major", $major)->where("id", $id)->first();
+        // --- look up tech record of user with specified major
+        $tech = TechStack::where("major", $major)->where("id", $id)->first();
         // --- update record ---
-        $project->fill($validated);
+        $tech->fill($validated);
 
-        if (isset($validated['image']) && $request->hasFile('image')) {
-            $file = $request->file('image');
+        if (isset($validated['img']) && $request->hasFile('img')) {
+            $file = $request->file('img');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('images', $filename, 'public');
-            $project->image_path = $path;
+            $tech->image_path = $path;
         }
 
         // -- saving changes in db --
-        $project->save();
+        $tech->save();
 
-        return $this->success(projectResource::make($project), 200, "project record updated successfully!");
+        return $this->success(TechStackResource::make($tech), 200, "tech record updated successfully!");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project $project)
+    public function destroy(TechStack $techStack)
     {
         //
     }

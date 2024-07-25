@@ -8,6 +8,7 @@ use App\Http\Controllers\v1\HobbyController;
 use App\Http\Controllers\v1\ProfileController;
 use App\Http\Controllers\v1\ProjectController;
 use App\Http\Controllers\v1\SkillController;
+use App\Http\Controllers\v1\TechStackController;
 use Illuminate\Support\Facades\Route;
 
 /* --- v1 Routes (personal use only)--- */
@@ -30,6 +31,8 @@ Route::prefix('v1')->group(function () {
     Route::get("{major}/project", [ProjectController::class, "showByMajor"]);
     /* - skill - */
     Route::get("{major}/skill", [SkillController::class, "showByMajor"]);
+    /* - tech - */
+    Route::get("{major}/tech", [TechStackController::class, "showByMajor"]);
 
     /* - user - */
     Route::post("user/register", [AuthController::class, "register"]);
@@ -64,4 +67,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     /* - skill - */
     Route::patch("{major}/skill/{id}", [SkillController::class, "update"]);
     Route::post("skill", [SkillController::class, "store"]);
+    /* - tech - */
+    Route::patch("{major}/tech/{id}", [TechStackController::class, "update"]);
+    Route::post("tech", [TechStackController::class, "store"]);
 });
