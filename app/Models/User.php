@@ -64,7 +64,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the eductions list of the user
+     * Get the experiences list of the user
      */
     public function experiences(): HasMany
     {
@@ -72,7 +72,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the eductions list of the user
+     * Get the courses list of the user
      */
     public function courses(): HasMany
     {
@@ -80,7 +80,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the eductions list of the user
+     * Get the hobbies list of the user
      */
     public function hobbies(): HasMany
     {
@@ -88,10 +88,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the eductions list of the user
+     * Get the projects list of the user
      */
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    /**
+     * Get the skills list of the user
+     */
+    public function skills(): HasMany
+    {
+        return $this->hasMany(Skill::class);
     }
 }
