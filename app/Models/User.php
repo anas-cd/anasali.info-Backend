@@ -118,4 +118,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Language::class);
     }
+
+    /**
+     * Get the interests list of the user
+     */
+    public function interests(): HasMany
+    {
+        return $this->hasMany(Interest::class);
+    }
 }

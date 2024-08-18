@@ -6,11 +6,13 @@ use App\Models\Course;
 use App\Models\Education;
 use App\Models\Experience;
 use App\Models\Hobby;
+use App\Models\Interest;
 use App\Models\Language;
 use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Skill;
 use App\Models\TechStack;
+use App\Policies\v1\InterestPolicy;
 use App\Policies\v1\LanguagePolicy;
 use App\Policies\v1\SkillPolicy;
 use App\Policies\v1\CoursePolicy;
@@ -48,5 +50,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Skill::class, SkillPolicy::class);
         Gate::policy(TechStack::class, TechStackPolicy::class);
         Gate::policy(Language::class, LanguagePolicy::class);
+        Gate::policy(Interest::class, InterestPolicy::class);
     }
 }
