@@ -5,6 +5,7 @@ use App\Http\Controllers\v1\CourseController;
 use App\Http\Controllers\v1\EducationController;
 use App\Http\Controllers\v1\ExperienceController;
 use App\Http\Controllers\v1\HobbyController;
+use App\Http\Controllers\v1\LanguageController;
 use App\Http\Controllers\v1\ProfileController;
 use App\Http\Controllers\v1\ProjectController;
 use App\Http\Controllers\v1\SkillController;
@@ -33,6 +34,8 @@ Route::prefix('v1')->group(function () {
     Route::get("{major}/skill", [SkillController::class, "showByMajor"]);
     /* - tech - */
     Route::get("{major}/tech", [TechStackController::class, "showByMajor"]);
+    /* - language - */
+    Route::get("{major}/language", [LanguageController::class, "showByMajor"]);
 
     /* - user - */
     Route::post("user/register", [AuthController::class, "register"]);
@@ -70,4 +73,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     /* - tech - */
     Route::patch("{major}/tech/{id}", [TechStackController::class, "update"]);
     Route::post("tech", [TechStackController::class, "store"]);
+    /* - language - */
+    Route::patch("{major}/language/{id}", [LanguageController::class, "update"]);
+    Route::post("language", [LanguageController::class, "store"]);
 });
