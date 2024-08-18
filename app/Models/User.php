@@ -110,4 +110,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(TechStack::class);
     }
+
+    /**
+     * Get the language list of the user
+     */
+    public function languages(): HasMany
+    {
+        return $this->hasMany(Language::class);
+    }
 }
