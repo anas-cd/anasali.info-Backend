@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\v1\AuthController;
+use App\Http\Controllers\v1\ContactController;
 use App\Http\Controllers\v1\CourseController;
 use App\Http\Controllers\v1\EducationController;
 use App\Http\Controllers\v1\ExperienceController;
@@ -39,6 +40,8 @@ Route::prefix('v1')->group(function () {
     Route::get("{major}/language", [LanguageController::class, "showByMajor"]);
     /* - interest - */
     Route::get("{major}/interest", [InterestController::class, "showByMajor"]);
+    /* - contact - */
+    Route::get("contact", [ContactController::class, "showAll"]);
 
     /* - user - */
     Route::post("user/register", [AuthController::class, "register"]);
@@ -82,4 +85,8 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     /* - interest - */
     Route::patch("{major}/interest/{id}", [InterestController::class, "update"]);
     Route::post("interest", [InterestController::class, "store"]);
+    /* - contact - */
+    Route::patch("contact/{id}", [ContactController::class, "update"]);
+    Route::post("contact", [ContactController::class, "store"]);
+    Route::post("contact/mail", [ContactController::class, "sendEmail"]);
 });

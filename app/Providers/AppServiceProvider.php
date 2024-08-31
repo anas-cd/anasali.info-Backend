@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Contact;
 use App\Models\Course;
 use App\Models\Education;
 use App\Models\Experience;
@@ -12,6 +13,7 @@ use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Skill;
 use App\Models\TechStack;
+use App\Policies\v1\ContactPolicy;
 use App\Policies\v1\InterestPolicy;
 use App\Policies\v1\LanguagePolicy;
 use App\Policies\v1\SkillPolicy;
@@ -51,5 +53,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(TechStack::class, TechStackPolicy::class);
         Gate::policy(Language::class, LanguagePolicy::class);
         Gate::policy(Interest::class, InterestPolicy::class);
+        Gate::policy(Contact::class, ContactPolicy::class);
     }
 }

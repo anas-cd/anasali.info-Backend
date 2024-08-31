@@ -2,27 +2,27 @@
 
 namespace App\Policies\v1;
 
-use App\Models\Course;
+use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class CoursePolicy
+class ContactPolicy
 {
     /**
      * Perform pre-authorization checks.
      */
-    public function before(User $user): Response|null
-    {
-        /**
-         * NOTE: v1 is for my personal use only, thus a user role model (roles table) would be an overkill, hence the use of token abilities
-         */
+    // public function before(User $user): Response|null
+    // {
+    //     /**
+    //      * NOTE: v1 is for my personal use only, thus a user role model (roles table) would be an overkill, hence the use of token abilities
+    //      */
 
-        if ($user->tokenCan("*")) {
-            return Response::allow();
-        }
+    //     if ($user->tokenCan("*")) {
+    //         return Response::allow();
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 
     /**
      * Determine whether the user can view any models.
@@ -35,7 +35,7 @@ class CoursePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Course $course): bool
+    public function view(User $user, Contact $contact): bool
     {
         //
     }
@@ -49,7 +49,7 @@ class CoursePolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("course:create")
+        return $user->tokenCan("contact:create")
             ? Response::allow()
             : Response::denyWithStatus(403);
     }
@@ -57,13 +57,13 @@ class CoursePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Course $course): Response
+    public function update(User $user, Contact $contact): Response
     {
         /**
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("course:update")
+        return $user->tokenCan("contact:update")
             ? Response::allow()
             : Response::denyWithStatus(403);
     }
@@ -71,7 +71,7 @@ class CoursePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Course $course): bool
+    public function delete(User $user, Contact $contact): bool
     {
         //
     }
@@ -79,7 +79,7 @@ class CoursePolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Course $course): bool
+    public function restore(User $user, Contact $contact): bool
     {
         //
     }
@@ -87,7 +87,7 @@ class CoursePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Course $course): bool
+    public function forceDelete(User $user, Contact $contact): bool
     {
         //
     }

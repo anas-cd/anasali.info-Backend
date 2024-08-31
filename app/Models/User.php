@@ -126,4 +126,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Interest::class);
     }
+
+    /**
+     * Get the contacts list of the user
+     */
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class);
+    }
 }
