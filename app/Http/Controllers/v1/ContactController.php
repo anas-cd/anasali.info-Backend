@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\contact\SendEmailRequest;
 use App\Http\Resources\v1\ContactResource;
 use App\Http\Resources\v1\ContactsCollection;
-use App\Mail\NewClientMessage;
+use App\Jobs\SendFormMessageJob;
 use App\Models\Contact;
 use App\Http\Requests\v1\contact\StoreContactRequest;
 use App\Http\Requests\v1\contact\UpdateContactRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Request;
 
 class ContactController extends Controller
@@ -116,8 +115,8 @@ class ContactController extends Controller
         // --- validated request ---
         $validated = $request->validated();
 
-        // --- sending email ---
-        Mail::to('anas.cd.97@gmail.com')->queue(new NewClientMessage($validated));
+        // --- dispatching job send email ---
+        SendFormMessageJob::dispatch($validated);
 
         return response()->json(['message' => 'Email sent successfully']);
     }
