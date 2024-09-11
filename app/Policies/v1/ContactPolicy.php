@@ -11,18 +11,18 @@ class ContactPolicy
     /**
      * Perform pre-authorization checks.
      */
-    // public function before(User $user): Response|null
-    // {
-    //     /**
-    //      * NOTE: v1 is for my personal use only, thus a user role model (roles table) would be an overkill, hence the use of token abilities
-    //      */
+    public function before(User $user): Response|null
+    {
+        /**
+         * NOTE: v1 is for my personal use only, thus a user role model (roles table) would be an overkill, hence the use of token abilities
+         */
 
-    //     if ($user->tokenCan("*")) {
-    //         return Response::allow();
-    //     }
+        if ($user->tokenCan("*")) {
+            return Response::allow();
+        }
 
-    //     return null;
-    // }
+        return null;
+    }
 
     /**
      * Determine whether the user can view any models.
