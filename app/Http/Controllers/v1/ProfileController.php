@@ -10,6 +10,7 @@ use App\Http\Requests\v1\profile\UpdateprofileRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class ProfileController extends Controller
@@ -45,6 +46,16 @@ class ProfileController extends Controller
             "user_id" => Auth::user()->id,
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'profile record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $profile->id
+                ]
+            );
+
         // --- returning new profile data ---
         return $this->success(ProfileResource::make($profile), 200, 'profile successfully created!');
     }
@@ -66,6 +77,13 @@ class ProfileController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $profile = Profile::where("major", $major)->first();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'profile record(s) fetched'
+            );
+
         return $this->success(ProfileResource::make($profile), 200, "success");
     }
 
@@ -90,6 +108,17 @@ class ProfileController extends Controller
 
         // --- update profile with new data ---
         $profile->update($validated);
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'profile record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $profile->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(ProfileResource::make($profile), 200, "profile updated successfully!");
     }

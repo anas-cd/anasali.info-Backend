@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\v1\contact;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -23,8 +24,7 @@ class UpdateContactRequest extends FormRequest
         } catch (\Throwable $th) {
             return false;
         }
-
-        $response = \Illuminate\Support\Facades\Gate::authorize("update", $course);
+        $response = Gate::authorize("update", $course);
 
         return $response->allowed() ? true : false;
     }

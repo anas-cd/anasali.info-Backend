@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewClientMessage;
 
@@ -41,7 +42,8 @@ class SendFormMessageJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        protected $validated
+        protected $validated,
+        protected $context
     ) {
         $this->onQueue('emails');
     }
@@ -53,5 +55,12 @@ class SendFormMessageJob implements ShouldQueue
     {
         // --- sending email ---
         Mail::to('anas.cd.97@gmail.com')->send(new NewClientMessage($this->validated));
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog', 'mailablesLog', 'appLog'])
+            ->debug(
+                'mail sent',
+                $this->context
+            );
     }
 }

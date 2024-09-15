@@ -9,6 +9,7 @@ use App\Http\Requests\v1\language\StorelanguageRequest;
 use App\Http\Requests\v1\language\UpdatelanguageRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class LanguageController extends Controller
@@ -47,6 +48,16 @@ class LanguageController extends Controller
             "level" => $validated["level"]
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'language record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $language->id
+                ]
+            );
+
         // --- returning new hobby data ---
         return $this->success(LanguageResource::make($language), 200, 'language record successfully created!');
     }
@@ -68,6 +79,12 @@ class LanguageController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $languages = Language::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'language record(s) fetched'
+            );
 
         return $this->success(LanguageResource::collection($languages), 200, "success");
     }
@@ -99,6 +116,17 @@ class LanguageController extends Controller
 
         // -- save changes in db --
         $language->save();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'language record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $language->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(LanguageResource::make($language), 200, "language record updated successfully!");
     }

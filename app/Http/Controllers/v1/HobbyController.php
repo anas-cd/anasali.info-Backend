@@ -9,6 +9,7 @@ use App\Http\Requests\v1\hobby\StoreHobbyRequest;
 use App\Http\Requests\v1\hobby\UpdateHobbyRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class HobbyController extends Controller
@@ -54,6 +55,16 @@ class HobbyController extends Controller
             "image_path" => $path
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'hobby record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $hobby->id
+                ]
+            );
+
         // --- returning new hobby data ---
         return $this->success(HobbyResource::make($hobby), 200, 'hobby record successfully created!');
     }
@@ -75,6 +86,12 @@ class HobbyController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $hobby = Hobby::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'hobby record(s) fetched'
+            );
 
         return $this->success(HobbyResource::collection($hobby), 200, "success");
     }
@@ -108,6 +125,17 @@ class HobbyController extends Controller
 
         // -- saving changes in db --
         $hobby->save();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'hobby record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $hobby->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(HobbyResource::make($hobby), 200, "hobby record updated successfully!");
     }

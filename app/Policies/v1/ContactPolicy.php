@@ -4,7 +4,9 @@ namespace App\Policies\v1;
 
 use App\Models\Contact;
 use App\Models\User;
+use Auth;
 use Illuminate\Auth\Access\Response;
+use Log;
 
 class ContactPolicy
 {
@@ -49,9 +51,21 @@ class ContactPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("contact:create")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+
+        if ($user->tokenCan("contact:create")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'contact:create'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**
@@ -63,9 +77,20 @@ class ContactPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("contact:update")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("contact:update")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'contact:update'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**
