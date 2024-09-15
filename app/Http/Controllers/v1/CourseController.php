@@ -9,6 +9,7 @@ use App\Http\Requests\v1\course\StoreCourseRequest;
 use App\Http\Requests\v1\course\UpdateCourseRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class CourseController extends Controller
@@ -49,6 +50,16 @@ class CourseController extends Controller
             "source_name" => $validated["sourceName"]
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'course record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $course->id
+                ]
+            );
+
         // --- returning new eduation data ---
         return $this->success(CourseResource::make($course), 200, 'course record successfully created!');
     }
@@ -70,6 +81,13 @@ class CourseController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $courses = Course::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'course record(s) fetched'
+            );
+
         return $this->success(CourseResource::collection($courses), 200, "success");
     }
 
@@ -94,6 +112,17 @@ class CourseController extends Controller
 
         // --- update record ---
         $course->update($validated);
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'course record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $course->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(CourseResource::make($course), 200, "education record updated successfully!");
     }

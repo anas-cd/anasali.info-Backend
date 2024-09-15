@@ -9,6 +9,7 @@ use App\Http\Requests\v1\education\StoreEducationRequest;
 use App\Http\Requests\v1\education\UpdateEducationRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class EducationController extends Controller
@@ -50,6 +51,16 @@ class EducationController extends Controller
             "courses" => $validated["courses"],
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'education record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $education->id
+                ]
+            );
+
         // --- returning new eduation data ---
         return $this->success(EducationResource::make($education), 200, 'education record successfully created!');
     }
@@ -71,6 +82,13 @@ class EducationController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $education = Education::where("major", $major)->first();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'education record(s) fetched'
+            );
+
         return $this->success(EducationResource::make($education), 200, "success");
     }
 
@@ -87,6 +105,17 @@ class EducationController extends Controller
 
         // --- update record ---
         $education->update($validated);
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'education record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $education->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(EducationResource::make($education), 200, "education record updated successfully!");
     }

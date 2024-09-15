@@ -9,6 +9,7 @@ use App\Http\Requests\v1\experience\StoreExperienceRequest;
 use App\Http\Requests\v1\experience\UpdateExperienceRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class ExperienceController extends Controller
@@ -61,6 +62,16 @@ class ExperienceController extends Controller
             "employer_website" => $validated["employer"]["website"],
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'experience record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $experience->id
+                ]
+            );
+
         // --- returning new experience data ---
         return $this->success(ExperienceResource::make($experience), 200, 'experience record successfully created!');
     }
@@ -82,6 +93,12 @@ class ExperienceController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $experience = Experience::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'experience record(s) fetched'
+            );
 
         return $this->success(ExperienceResource::collection($experience), 200, "success");
     }
@@ -117,6 +134,17 @@ class ExperienceController extends Controller
         }
         // -- saving changes in db --
         $experience->save();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'experience record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $experience->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(ExperienceResource::make($experience), 200, "experience record updated successfully!");
     }

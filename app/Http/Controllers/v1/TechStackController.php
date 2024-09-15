@@ -10,6 +10,7 @@ use App\Http\Requests\v1\techStack\StoreTechStackRequest;
 use App\Http\Requests\v1\techStack\UpdateTechStackRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class TechStackController extends Controller
@@ -60,6 +61,16 @@ class TechStackController extends Controller
             "image_path" => $path,
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'tech record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $tech->id
+                ]
+            );
+
         // --- returning new tech data ---
         return $this->success(TechStackResource::make($tech), 200, 'tech record successfully created!');
     }
@@ -81,6 +92,12 @@ class TechStackController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $tech = TechStack::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'tech record(s) fetched'
+            );
 
         return $this->success(new TechStackCollection($tech), 200, "success");
     }
@@ -114,6 +131,17 @@ class TechStackController extends Controller
 
         // -- saving changes in db --
         $tech->save();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'tech record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $tech->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(TechStackResource::make($tech), 200, "tech record updated successfully!");
     }

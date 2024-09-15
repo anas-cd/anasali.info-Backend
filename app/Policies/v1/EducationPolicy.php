@@ -5,6 +5,7 @@ namespace App\Policies\v1;
 use App\Models\Education;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Log;
 
 class EducationPolicy
 {
@@ -49,9 +50,20 @@ class EducationPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("education:create")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("education:create")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'education:create'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**
@@ -63,9 +75,20 @@ class EducationPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("education:update")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("education:update")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'education:update'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**

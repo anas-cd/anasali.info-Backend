@@ -12,6 +12,8 @@ use App\Http\Requests\v1\contact\StoreContactRequest;
 use App\Http\Requests\v1\contact\UpdateContactRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class ContactController extends Controller
@@ -50,6 +52,16 @@ class ContactController extends Controller
 
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'contact record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $contact->id
+                ]
+            );
+
         // --- returning new eduation data ---
         return $this->success(ContactResource::make($contact), 200, 'contact record successfully created!');
     }
@@ -71,6 +83,13 @@ class ContactController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $contact = Contact::get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'contact info fetched'
+            );
+
         return $this->success(new ContactsCollection($contact), 200, "success");
     }
 
@@ -96,6 +115,17 @@ class ContactController extends Controller
         // --- update record ---
         $contact->update($validated);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'contact record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $contact->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
+
         return $this->success(ContactResource::make($contact), 200, "contact record updated successfully!");
     }
 
@@ -115,9 +145,33 @@ class ContactController extends Controller
         // --- validated request ---
         $validated = $request->validated();
 
-        // --- dispatching job send email ---
-        SendFormMessageJob::dispatch($validated);
 
+
+        // --- logging ---
+        // -- logging short format data --
+        Log::stack(['single', 'devLog', 'activityLog', 'appLog'])
+            ->debug(
+                'mailable job dispatched to `emails` queue',
+                [
+                    'email' => $validated['clientEmail']
+                ]
+            );
+
+        // -- logging long format data (with message) --
+        Log::channel('mailablesLog')
+            ->debug(
+                'mailable job dispatched to `emails` queue',
+                [
+                    'email' => $validated['clientEmail'],
+                    'message' => $validated['message']
+                ]
+            );
+
+        // -- preparing context for presistance --
+        $context = ['email' => $validated['clientEmail']];
+
+        // --- dispatching job send email ---
+        SendFormMessageJob::dispatch($validated, $context);
         return response()->json(['message' => 'Email sent successfully']);
     }
 }

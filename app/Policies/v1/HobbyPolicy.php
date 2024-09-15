@@ -5,6 +5,7 @@ namespace App\Policies\v1;
 use App\Models\Hobby;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Log;
 
 class HobbyPolicy
 {
@@ -49,9 +50,20 @@ class HobbyPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("hobby:create")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("hobby:create")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'hobby:create'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**
@@ -63,9 +75,20 @@ class HobbyPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("hobby:update")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("hobby:update")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'hobby:update'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**

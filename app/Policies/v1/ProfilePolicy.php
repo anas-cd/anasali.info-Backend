@@ -5,6 +5,7 @@ namespace App\Policies\v1;
 use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Log;
 
 class ProfilePolicy
 {
@@ -48,9 +49,20 @@ class ProfilePolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("profile:create")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("profile:create")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'profile:create'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**
@@ -62,9 +74,20 @@ class ProfilePolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("profile:update")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("profile:update")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'profile:update'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**

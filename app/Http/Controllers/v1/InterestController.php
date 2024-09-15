@@ -9,6 +9,7 @@ use App\Http\Requests\v1\interest\StoreInterestRequest;
 use App\Http\Requests\v1\interest\UpdateInterestRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class InterestController extends Controller
@@ -58,6 +59,16 @@ class InterestController extends Controller
             "image_path" => $path ?? null
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'interest record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $interest->id
+                ]
+            );
+
         // --- returning new hobby data ---
         return $this->success(InterestResource::make($interest), 200, 'interest record successfully created!');
     }
@@ -79,6 +90,12 @@ class InterestController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $interest = Interest::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'interest record(s) fetched'
+            );
 
         return $this->success(InterestResource::collection($interest), 200, "success");
     }
@@ -111,6 +128,17 @@ class InterestController extends Controller
 
         // -- saving changes in db --
         $interest->save();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'interest record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $interest->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(InterestResource::make($interest), 200, "interest record updated successfully!");
     }

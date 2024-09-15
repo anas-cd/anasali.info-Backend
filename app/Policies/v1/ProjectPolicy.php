@@ -5,24 +5,25 @@ namespace App\Policies\v1;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Log;
 
 class ProjectPolicy
 {
     /**
      * Perform pre-authorization checks.
      */
-    // public function before(User $user): Response|null
-    // {
-    //     /**
-    //      * NOTE: v1 is for my personal use only, thus a user role model (roles table) would be an overkill, hence the use of token abilities
-    //      */
+    public function before(User $user): Response|null
+    {
+        /**
+         * NOTE: v1 is for my personal use only, thus a user role model (roles table) would be an overkill, hence the use of token abilities
+         */
 
-    //     if ($user->tokenCan("*")) {
-    //         return Response::allow();
-    //     }
+        if ($user->tokenCan("*")) {
+            return Response::allow();
+        }
 
-    //     return null;
-    // }
+        return null;
+    }
 
     /**
      * Determine whether the user can view any models.
@@ -49,9 +50,20 @@ class ProjectPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("project:create")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("project:create")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'project:create'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**
@@ -63,9 +75,20 @@ class ProjectPolicy
          * NOTE: this authentication scheme is only for v1, since there well be only my account
          * TODO: handle http exception to be returned from API Response trait.
          */
-        return $user->tokenCan("project:update")
-            ? Response::allow()
-            : Response::denyWithStatus(403);
+        if ($user->tokenCan("project:update")) {
+            return Response::allow();
+        } else {
+            // - logging -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->debug(
+                    'permission denied',
+                    [
+                        'user-id' => $user->id,
+                        'permission' => 'project:update'
+                    ]
+                );
+            return Response::denyWithStatus(403);
+        }
     }
 
     /**

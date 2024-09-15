@@ -9,6 +9,7 @@ use App\Http\Requests\v1\project\StoreProjectRequest;
 use App\Http\Requests\v1\project\UpdateProjectRequest;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Request;
 
 class ProjectController extends Controller
@@ -58,6 +59,16 @@ class ProjectController extends Controller
             "tags" => $validated["tags"]
         ]);
 
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'project record created',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $project->id
+                ]
+            );
+
         // --- returning new project data ---
         return $this->success(ProjectResource::make($project), 200, 'project record successfully created!');
     }
@@ -79,6 +90,12 @@ class ProjectController extends Controller
          * NOTE: this is not linked to any user since there is only one user.
          */
         $project = Project::where("major", $major)->get();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'project record(s) fetched'
+            );
 
         return $this->success(ProjectResource::collection($project), 200, "success");
     }
@@ -112,6 +129,17 @@ class ProjectController extends Controller
 
         // -- saving changes in db --
         $project->save();
+
+        // --- logging ---
+        Log::stack(['single', 'devLog', 'activityLog'])
+            ->debug(
+                'project record updated',
+                [
+                    'user-id' => Auth::user()->id,
+                    'record-id' => $project->id,
+                    'columns-updated' => array_keys($validated)
+                ]
+            );
 
         return $this->success(projectResource::make($project), 200, "project record updated successfully!");
     }

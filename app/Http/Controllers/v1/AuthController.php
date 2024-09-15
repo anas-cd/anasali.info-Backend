@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Traits\APIResponseTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Log;
 
 class AuthController extends Controller
 {
@@ -29,6 +30,15 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+
+        // - log auth activity -
+        Log::stack(['single', 'devLog', 'authLog'])
+            ->info(
+                'new user registered',
+                [
+                    'user-id' => $user->id
+                ]
+            );
 
         /**
          * NOTE: in v1 all users who register using the API will have no prvilages since this version is only for personla use
@@ -52,12 +62,30 @@ class AuthController extends Controller
         // - checking users db -
         if (!Auth::attempt($validated)) {
             // -- unauthenticated --
+            // - log auth activity -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->info(
+                    'login attempt failed',
+                    [
+                        'login-email' => $validated['email']
+                    ]
+                );
+
             return $this->failed([], 401, 'Invalid email or password');
         } else {
             // -- authenticated --
 
             // - retrive user info -
             $user = Auth::user();
+
+            // - log auth activity -
+            Log::stack(['single', 'devLog', 'authLog'])
+                ->info(
+                    'user login',
+                    [
+                        'user-id' => $user->id
+                    ]
+                );
 
             // - provide access token -
             return $this->success([

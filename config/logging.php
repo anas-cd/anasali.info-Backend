@@ -58,6 +58,10 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        /**
+         * channel : single
+         * for all logs
+         */
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -65,9 +69,126 @@ return [
             'replace_placeholders' => true,
         ],
 
+        /**
+         * NOTE: high priority
+         * channel : devLog
+         * for development and debugging
+         */
+        'devLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/dev.log'),
+            'level' => 'debug',
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * NOTE: high priority
+         * channel : requestLog
+         * logging requests data :
+         * - timestamp
+         * - request id
+         * - IP address
+         * - HTTP methode
+         * - requested endpoint
+         */
+        'requestLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/request.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * NOTE: low priority
+         * channel : responseLog
+         * logging response data :
+         * - status code
+         * - response time
+         */
+        'responseLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/response.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * NOTE: low priority
+         * channel : authLog
+         * logging data about auth operations :
+         * - login & sign up attempts
+         * - permission access issues
+         */
+        'authLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/auth.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * NOTE: low priority
+         * channel : activityLog
+         * logging user activity :
+         * - user interactions logs (e.g. creating, updating, or deleting data)
+         * - audit trails (what data has been changed, just the columns that was changed not the data itself)
+         */
+        'activityLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/activity.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * NOTE: low priority
+         * channel : appLog
+         * logging general app performance data :
+         * - TODO: DB logs (like slow or filed queries)
+         * - TODO: DB execution time
+         * - job/queue addition, success, failes, retries, and time of execution
+         */
+        'appLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/app.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * NOTE: high priority
+         * channel : mailablesLog
+         * logging email sending operations
+         */
+        'mailablesLog' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mailables.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
+        /**
+         * TODO:
+         * NOTE: low priority
+         * channel : systemLog
+         * logging server & system status data :
+         * - CPU usage
+         * - memory usage
+         * - storage usage
+         * - API availablity
+         */
+        'systemLog' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/system.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 14),
             'replace_placeholders' => true,
@@ -89,7 +210,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
@@ -124,7 +245,7 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/emergency.log'),
         ],
 
     ],
